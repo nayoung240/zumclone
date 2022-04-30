@@ -12,5 +12,8 @@ app.use("/public", express.static(__dirname + "/public"));
 // views render
 app.get("/", (req, res) => res.render("home"));
 
+// 유저가 어떤 경로로 들어와도 홈(/)으로 보내기
+app.get("/*", (req, res) => res.redirect("/"));
+
 const handleListen = () => console.log('qqq');
 app.listen(3000, handleListen);
