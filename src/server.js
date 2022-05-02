@@ -17,16 +17,22 @@ app.get("/", (req, res) => res.render("home"));
 // 유저가 어떤 경로로 들어와도 홈(/)으로 보내기
 app.get("/*", (req, res) => res.redirect("/"));
 
-const handleListen = () => console.log('qqq');
-// app.listen(3000, handleListen);
-
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
 
-function handleConnection(socket) {
-    console.log(socket);
-}
+// 브라우저 새로고침 시 작동
+wss.on("connection", (socket) => {
+    console.log("connected to Browser");
 
-wss.on("connection", handleConnection);
+    // 브라우저를 종료할 때 실행
+    socket.on("close", () => console.log("disconnected from Browser"))
 
-server.listen(3000, handleListen);
+    // 브라우저에서 보낸 메시지
+    socket.on("message", (message) => {
+        console.log(message.toString());
+    });
+
+    socket.send("hello hi");
+});
+
+server.listen(4000, () => console.log('listening'));
