@@ -1,4 +1,4 @@
-// window.location.host == localhost:3000
+// window.location.host == localhost:4000
 const socket = new WebSocket(`ws://${window.location.host}`);
 
 // 서버가 시작될 때 실행됨
