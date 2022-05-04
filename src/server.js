@@ -20,19 +20,23 @@ app.get("/*", (req, res) => res.redirect("/"));
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server});
 
+// 연결된 클라이언트 저장 ex) 다른 브라우저들
+const sockets = [];
+
 // 브라우저 새로고침 시 작동
 wss.on("connection", (socket) => {
     console.log("connected to Browser");
+
+    sockets.push(socket);
 
     // 브라우저를 종료할 때 실행
     socket.on("close", () => console.log("disconnected from Browser"))
 
     // 브라우저에서 보낸 메시지
     socket.on("message", (message) => {
-        console.log(message.toString());
+        // 연결된 모든 클라이언트에 메시지 보내기
+        sockets.forEach(aSocket => aSocket.send(message.toString()));;
     });
-
-    socket.send("hello hi");
 });
 
-server.listen(4000, () => console.log('listening'));
+server.listen(5000, () => console.log('listening'));
