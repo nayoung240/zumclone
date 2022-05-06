@@ -29,14 +29,25 @@ wss.on("connection", (socket) => {
 
     sockets.push(socket);
 
+    socket["nickname"] = "Unknown";
+
     // 브라우저를 종료할 때 실행
     socket.on("close", () => console.log("disconnected from Browser"))
 
     // 브라우저에서 보낸 메시지
-    socket.on("message", (message) => {
-        // 연결된 모든 클라이언트에 메시지 보내기
-        sockets.forEach(aSocket => aSocket.send(message.toString()));;
+    socket.on("message", (msg) => {
+        const message = JSON.parse(msg);
+
+        switch(message.type) {
+            case "new_message":
+                // 연결된 모든 클라이언트에 메시지 보내기
+                sockets.forEach(aSocket => aSocket.send(`${socket.nickname}: ${message.payload}`));;
+                break;
+            case "nickname":
+                socket["nickname"] = message.payload;
+                break;
+        }
     });
 });
 
-server.listen(5000, () => console.log('listening'));
+server.listen(4000, () => console.log('listening'));
