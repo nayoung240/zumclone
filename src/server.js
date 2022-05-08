@@ -22,11 +22,16 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
+    // 이벤트 리스너
+    socket.onAny((event) => {
+        console.log(`Socket Event:${event}`);
+    })
+
     socket.on("enter_room", (roomName, done) => {
-        console.log(roomName);
-        setTimeout(() => {
-            done("server is done!"); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
-        }, 15000);
+        socket.join(roomName);
+        console.log(socket.rooms); // 기본적으로 User와 서버 사이에 private room이 있다 (socket.id)
+
+        done(); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
     });
 });
 

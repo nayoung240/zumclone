@@ -1,9 +1,11 @@
 # 2.0 WebSockets vs SocketIO
 
-## SocketIO
+## [SocketIO](https://socket.io/)
 : 실시간, 양방향, event 기반의 통신을 가능하게하는 프레임워크
 - WebSocket을 사용한다. WebSocket 연결이 불가능한 경우 HTTP long polling을 사용한다.
 - 자동 재연결 ex) wifi가 끊겨도 재연결한다.
+- Server API, Client API 별도로 존재한다.
+- 카지노 사이트에서 많이 사용된다.
 
 <br><br>
 
@@ -34,7 +36,7 @@ wsServer.on("connection", socket => {
 
 <br><br>
 
-# 2.2 SocketIO - 서버 <-> 프론트 양방향 통신
+# 2.2 ~ 2.3 SocketIO - 서버 <-> 프론트 양방향 통신
 
 > Socket IO를 이용하면 방에 참가하고  떠나는 것이 매우 간단하다.
 
@@ -68,4 +70,23 @@ socket.on("enter_room", (roomName, done) => {
         done("server is done!"); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
     }, 10000);
 });
+```
+
+# 2.4 Rooms
+
+### 소켓을 주어진 방에 추가하기
+```
+socket.join(roomName);
+```
+
+### 이벤트 리스너
+```
+socket.onAny((event) => {
+    console.log(`Socket Event:${event}`);
+})
+```
+
+### 기본적으로 User와 서버 사이에 private room이 있다 (socket.id)
+```
+console.log(socket.rooms);
 ```
