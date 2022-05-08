@@ -36,7 +36,7 @@ wsServer.on("connection", socket => {
 
 <br><br>
 
-# 2.2 ~ 2.3 SocketIO - 서버 <-> 프론트 양방향 통신
+# 2.2~2.3 SocketIO - 서버 <-> 프론트 양방향 통신
 
 > Socket IO를 이용하면 방에 참가하고  떠나는 것이 매우 간단하다.
 
@@ -66,9 +66,7 @@ server.js
 ```
 socket.on("enter_room", (roomName, done) => {
     console.log(roomName);
-    setTimeout(() => {
-        done("server is done!"); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
-    }, 10000);
+    done("server is done!"); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
 });
 ```
 

@@ -17,7 +17,7 @@ function showRoom() {
     room.hidden = false;
 
     const h3 = document.querySelector("h3");
-    h3.innerText = `Room ${roonName}`;
+    h3.innerText = `Room ${roomName}`;
 }
 
 function handleRoomSubmit(event) {
