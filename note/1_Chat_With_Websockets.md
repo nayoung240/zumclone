@@ -1,10 +1,10 @@
 # 1.1 HTTP vs WebSocket
 
-### HTTP
+## HTTP
 : 인터넷 프로토콜
 - <b>stateless</b>: request에 대한 response를 주고난 후면 backend는 client를 기억하지 못하고 끝난다.
 
-### WebSocket
+## WebSocket
 : 실시간 프로토콜 ex) chat, notification
 - request에 한번 accept 하게되면 client와 서버는 계속 통신 가능하다.
 

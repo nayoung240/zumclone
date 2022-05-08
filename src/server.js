@@ -21,8 +21,13 @@ app.get("/*", (req, res) => res.redirect("/"));
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
-wsServer.on("connection", socket => {
-    console.log(socket);
+wsServer.on("connection", (socket) => {
+    socket.on("enter_room", (roomName, done) => {
+        console.log(roomName);
+        setTimeout(() => {
+            done("server is done!"); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
+        }, 15000);
+    });
 });
 
 // Websocket 구현
