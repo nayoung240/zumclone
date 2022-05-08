@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
-import WebSocket from "ws";
+// import WebSocket from "ws";
+import SocketIO from "socket.io";
 
 const app = express();
 
@@ -17,8 +18,16 @@ app.get("/", (req, res) => res.render("home"));
 // 유저가 어떤 경로로 들어와도 홈(/)으로 보내기
 app.get("/*", (req, res) => res.redirect("/"));
 
-const server = http.createServer(app);
-const wss = new WebSocket.Server({server});
+const httpServer = http.createServer(app);
+const wsServer = SocketIO(httpServer);
+
+wsServer.on("connection", socket => {
+    console.log(socket);
+});
+
+// Websocket 구현
+/*
+const wss = new WebSocket.Server({httpServer});
 
 // 연결된 클라이언트 저장 ex) 다른 브라우저들
 const sockets = [];
@@ -49,5 +58,6 @@ wss.on("connection", (socket) => {
         }
     });
 });
+*/
 
-server.listen(4000, () => console.log('listening'));
+httpServer.listen(4000, () => console.log('listening'));

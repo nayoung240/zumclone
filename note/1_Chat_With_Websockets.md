@@ -25,13 +25,17 @@ npm i ws
 
 # 1.3 WebSocket Events
 
-### server.js의 socket의 의미: 연결된 브라우저
+### http 위에 소켓서버 띄우기
 ```
-function handleConnection(socket) {
-    console.log(socket);
-}
+const server = http.createServer(app);
+const wss = new WebSocket.Server({server});
+```
 
-wss.on("connection", handleConnection);
+### front 소켓과 연결하기
+```
+wss.on("connection", (socket) => {
+    console.log(socket);
+});
 ```
 
 ### app.js의 socket의 의미: 서버로의 연결
@@ -91,5 +95,3 @@ socket.addEventListener("close", () => {
 ```
 socket.send("hello from the browser!");
 ```
-
-<br><br>
