@@ -70,6 +70,8 @@ socket.on("enter_room", (roomName, done) => {
 });
 ```
 
+<br><br>
+
 # 2.4 Rooms
 
 ### 소켓을 주어진 방에 추가하기
@@ -91,7 +93,7 @@ console.log(socket.rooms);
 
 <br><br>
 
-# 2.4~2.7 Room Messages 주고 받기
+# 2.5~2.7 Room Messages 주고 받기
 
 ### room에 있는 모든 socket으로 메시지 보내기 (서버👉클라이언트)
 - 본인 socket은 제외하고 보내진다.
