@@ -22,16 +22,39 @@ const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
 wsServer.on("connection", (socket) => {
+    socket["nickname"] = "unknown";
+
     // 이벤트 리스너
     socket.onAny((event) => {
         console.log(`Socket Event:${event}`);
     })
 
+    // 클라이언트가 방에 들어왔을 때
     socket.on("enter_room", (roomName, done) => {
         socket.join(roomName);
         console.log(socket.rooms); // 기본적으로 User와 서버 사이에 private room이 있다 (socket.id)
 
         done(); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
+
+        // 본인 소켓 외의 모든 room에 메시지 보내기
+        socket.to(roomName).emit("welcome", `${socket.nickname}님이 들어왔습니다!`);
+    });
+
+    // 클라이언트가 서버와 연결이 끊겼을 때
+    socket.on("disconnecting", () => {
+        socket.rooms.forEach((room) => {
+            socket.to(room).emit("bye", `${socket.nickname}님이 나갔습니다!`);
+        });
+    });
+
+    socket.on("new_message", (msg, roomName, done) => {
+        socket.to(roomName).emit("new_message", `${socket.nickname}: ${msg}`);
+
+        done();
+    });
+
+    socket.on("nickname", (nick) => {
+        socket["nickname"] = nick;
     });
 });
 

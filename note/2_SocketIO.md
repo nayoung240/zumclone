@@ -88,3 +88,51 @@ socket.onAny((event) => {
 ```
 console.log(socket.rooms);
 ```
+
+<br><br>
+
+# 2.4~2.7 Room Messages 주고 받기
+
+### room에 있는 모든 socket으로 메시지 보내기 (서버->클라이언트)
+- 본인 socket은 제외하고 보내진다.
+
+server.js
+```
+socket.on("enter_room", (roomName, done) => {
+    socket.join(roomName);
+
+    // 본인 소켓 외의 모든 room에 메시지 보내기
+    socket.to(roomName).emit("welcome");
+});
+
+socket.on("disconnecting", () => {
+    socket.rooms.forEach((room) => {
+        socket.to(room).emit("bye");
+    });
+})
+```
+
+app.js
+```
+socket.on("welcome", () => {
+    addMessage("누군가 들어왔습니다!");
+})
+
+socket.on("bye", () => {
+    addMessage("누군가 나갔습니다!");
+})
+```
+
+### 닉네임 값 입력받기 (클라이언트->서버)
+
+app.js
+```
+socket.emit("nickname", input.value);
+```
+
+server.js
+```
+socket.on("nickname", (nick) => {
+    socket["nickname"] = nick;
+});
+```
