@@ -142,3 +142,45 @@ socket.on("nickname", (nick) => {
     socket["nickname"] = nick;
 });
 ```
+
+## 두 브라우저간의 통신 결과화면
+![message](./img/2_6message.PNG)
+
+<br><br>
+
+# 2.8~2.9 Room Count
+
+## Adapter
+: 다른 서버들 사이에 실시간 어플리케이션을 동기화하는 역할
+ex) 만약 A서버에 있는 클라이언트가 B서버에 있는 클라이언트에 메시지를 보내고 싶어도 각각 서버는 다른 메모리를 사용하고 있기 때문에 불가능하다.
+👉 해결방법은 Adapter를 사용하는 것 이다.
+
+### [MongoDB Adapter](https://socket.io/docs/v4/mongo-adapter/)
+: Adapter는 MongoDB를 사용해서 서버간의 통신을 해준다.
+ex) 만약 A서버에 있는 클라이언트가 B서버에 있는 클라이언트에 메시지를 보낼 때 A서버 -> Adapter -> MongoDB -> Adapter -> B서버 를 통해 통신이 가능 하다.
+
+![MongoDB Adapter](https://socket.io/assets/images/mongo-adapter-88a4451b9d19d21c8d92d9a7586df15b.png)
+
+
+### socket id들을 가져와서 public room과 private room을 구분하기
+- wsServer.sockets.adapter.sids: socket id 목록
+- wsServer.sockets.adapter.rooms: room id 목록
+```
+const {
+    socket: {
+        adapter: {sids, rooms}, 
+    }, 
+} = wsServer;
+
+rooms.forEach((_, key) => {
+    // socket id와 동일하지 않는 room id이면 채팅방이다.
+    if(sids.get(key) === undefined) {
+        publicRooms.push(key);
+    }
+});
+```
+
+### 모든 소켓에 메시지 보내기
+```
+wsServer.sockets.emit("room_change", publicRooms());
+```

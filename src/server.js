@@ -21,6 +21,26 @@ app.get("/*", (req, res) => res.redirect("/"));
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
 
+// socket id들을 가져와서 public room과 private room을 구분하기
+function publicRooms() {
+    const publicRooms = [];
+
+    const {
+        sockets: {
+            adapter: {sids, rooms}, 
+        }, 
+    } = wsServer;
+
+    rooms.forEach((_, key) => {
+        // socket id와 동일하지 않는 room이면 채팅방이다.
+        if(sids.get(key) === undefined) {
+            publicRooms.push(key);
+        }
+    });
+
+    return publicRooms;
+}
+
 wsServer.on("connection", (socket) => {
     socket["nickname"] = "unknown";
 
@@ -38,13 +58,22 @@ wsServer.on("connection", (socket) => {
 
         // 본인 소켓 외의 모든 room에 메시지 보내기
         socket.to(roomName).emit("welcome", `${socket.nickname}님이 들어왔습니다!`);
+
+        // room이 생겼을 때 모든 소켓에 메시지 보내기
+        wsServer.sockets.emit("room_change", publicRooms());
     });
 
-    // 클라이언트가 서버와 연결이 끊겼을 때
+    // 클라이언트(소켓)가 서버와 연결이 끊기기 직전에
     socket.on("disconnecting", () => {
         socket.rooms.forEach((room) => {
             socket.to(room).emit("bye", `${socket.nickname}님이 나갔습니다!`);
         });
+    });
+
+    // 클라이언트가 서버와 연결이 끊겼을 때
+    socket.on("disconnect", () => {
+        // room이 사라졌을 때 모든 소켓에 메시지 보내기
+        wsServer.sockets.emit("room_change", publicRooms());
     });
 
     socket.on("new_message", (msg, roomName, done) => {
