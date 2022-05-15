@@ -189,6 +189,20 @@ wsServer.sockets.emit("room_change", publicRooms());
 
 # 2.10 User Count
 
+### room 안의 참여자 수
 ```
 wsServer.sockets.adapter.rooms.get(roomName)?.size;
+```
+
+<br><br>
+
+# 2.11 Admin Panel
+
+## [Admin UI](https://socket.io/docs/v4/admin-ui/)
+: 현재 연결된 서버 및 클라이언트, 각 방의 세부 사항 등 관리가능한 어드민 페이지
+
+### admin-ui 설치하기
+- [대시보드 확인하기](http://localhost:4000/admin)
+```
+npm i @socket.io/admin-ui
 ```
