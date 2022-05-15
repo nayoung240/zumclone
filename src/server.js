@@ -41,6 +41,10 @@ function publicRooms() {
     return publicRooms;
 }
 
+function countRoom(roomName) {
+    return wsServer.sockets.adapter.rooms.get(roomName)?.size;
+}
+
 wsServer.on("connection", (socket) => {
     socket["nickname"] = "unknown";
 
@@ -57,7 +61,7 @@ wsServer.on("connection", (socket) => {
         done(); // 해당 코드가 실행되면 프론트엔드에서 구현한 함수가 프론트에서 실행된다
 
         // 본인 소켓 외의 모든 room에 메시지 보내기
-        socket.to(roomName).emit("welcome", `${socket.nickname}님이 들어왔습니다!`);
+        socket.to(roomName).emit("welcome", `${socket.nickname}님이 들어왔습니다!`, countRoom(roomName));
 
         // room이 생겼을 때 모든 소켓에 메시지 보내기
         wsServer.sockets.emit("room_change", publicRooms());
@@ -66,7 +70,7 @@ wsServer.on("connection", (socket) => {
     // 클라이언트(소켓)가 서버와 연결이 끊기기 직전에
     socket.on("disconnecting", () => {
         socket.rooms.forEach((room) => {
-            socket.to(room).emit("bye", `${socket.nickname}님이 나갔습니다!`);
+            socket.to(room).emit("bye", `${socket.nickname}님이 나갔습니다!`, countRoom(room)-1);
         });
     });
 

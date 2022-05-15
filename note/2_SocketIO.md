@@ -184,3 +184,11 @@ rooms.forEach((_, key) => {
 ```
 wsServer.sockets.emit("room_change", publicRooms());
 ```
+
+<br><br>
+
+# 2.10 User Count
+
+```
+wsServer.sockets.adapter.rooms.get(roomName)?.size;
+```

@@ -8,6 +8,7 @@ const nickForm = document.querySelector("#nick");
 room.hidden = true;
 
 let roomName = "";
+let userCount = 0;
 
 function serverDone(msg) {
     console.log(`The Server says: `, msg);
@@ -31,12 +32,16 @@ function handleNicknameSubmit(event) {
     socket.emit("nickname", input.value);
 }
 
+function setRoom(userCount) {
+    const h3 = document.querySelector("h3");
+    h3.innerText = `Room ${roomName} (${userCount})`;
+}
+
 function showRoom() {
     welcome.hidden = true;
     room.hidden = false;
 
-    const h3 = document.querySelector("h3");
-    h3.innerText = `Room ${roomName}`;
+    setRoom();
 
     const msgForm = room.querySelector("#msg");
     msgForm.addEventListener("submit", handleMessageSubmit);
@@ -65,11 +70,15 @@ roomnameForm.addEventListener("submit", handleRoomSubmit);
 nickForm.addEventListener("submit", handleNicknameSubmit);
 
 // 서버에서 받은 이벤트
-socket.on("welcome", (msg) => {
+socket.on("welcome", (msg, count) => {
+    userCount = count;
+    setRoom();
     addMessage(msg);
 });
 
-socket.on("bye", (msg) => {
+socket.on("bye", (msg, count) => {
+    userCount = count;
+    setRoom();
     addMessage(msg);
 });
 
