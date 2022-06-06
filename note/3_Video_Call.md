@@ -36,9 +36,7 @@ myStream = await navigator.mediaDevices.getUserMedia({
 - peer to peer가 아닌 채팅을 주고받을 때 모든 영상, 오디오, 텍스트를 서버에 업로드하고 서버에서 받아서 보여주게 되는 경우 비용이 많이 든다.
 - But, 브라우저에게 다른 브라우저가 어디에 있는 서버인지(offer) 알려주는 서버는 필요하다.
 
-<br><br>
-
-# 3.5 Offers (peer A)
+<br>
 
 ## signaling process
 ![message](./img/3_4webrtc.PNG)
@@ -47,17 +45,23 @@ myStream = await navigator.mediaDevices.getUserMedia({
 - Peer B: 새로운 사용자
 - socket.io를 통해 통신한다.
 
+<br>
 
-1. peerConnection을 각 브라우저에 만들기 
+# 3.5 Offers (peer A)
+
+### makeConnection
+0. peerConnection을 각 브라우저에 만들기 / peer-to-peer 연결 안에다가 영상과 오디오 스트림을 넣기 
     - getUserMedia()
-2. peer-to-peer 연결 안에다가 영상과 오디오 스트림을 넣기 
-    - addStream(), createOffer()
-3. 생성한 offer로 연결 구성하기
-    - setLocalDescription()
+    - addStream() // 사용하지는 않고 getTracks()로 개별적으로 넣어준다.
 ```
 myPeerConnection = new RTCPeerConnection();
 myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream))
 ```
+
+### welcome
+1. offer 생성 후 연결 구성하기
+    - createOffer()
+    - setLocalDescription()
 ```
 // peer A는 offer를 생성한다.
 const offer = await myPeerConnection.createOffer();
@@ -66,3 +70,35 @@ myPeerConnection.setLocalDescription(offer);
 // peer B로 offer를 보낸다.
 socket.emit("offer", offer, roomName);
 ```
+
+<br><br>
+
+# 3.6 Answers (peer B)
+
+### offer
+2. offer를 받고 peer A의 description을 세팅하기
+    - setRemoteDescription()
+    - getUserMedia()
+    - addStream()
+3. answer를 생성하기
+    - createAnswer()
+    - setLocalDescription()
+```
+myPeerConnection.setRemoteDescription(offer);
+
+const answer = await myPeerConnection.createAnswer();
+myPeerConnection.setLocalDescription(answer);
+
+// peer A로 answer를 보낸다.
+socket.emit("answer", answer, roomName);
+```
+
+### answer
+4. 받은 answer로 remoteDescription 세팅하기
+```
+myPeerConnection.setRemoteDescription(answer);
+```
+
+<br>
+
+> 각 브라우저는 localDescription과 remoteDescription을 갖게된다.
