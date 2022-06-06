@@ -3,10 +3,15 @@ const myFace = document.getElementById("myFace");
 const muteBtn = document.getElementById("mute");
 const cameraBtn = document.getElementById("camera");
 const camerasSelect = document.getElementById("cameras");
+const call = document.getElementById("call");
+
+call.hidden = true;
 
 let myStream;
 let muted = false;
 let camera = false;
+let roomName;
+let myPeerConnection;
 
 async function getCameras() {
     try {
@@ -58,8 +63,6 @@ async function getMedia(deviceId) {
     }
 }
 
-getMedia();
-
 function handleMuteBtn() {
     myStream.getAudioTracks().forEach((track) => {
         track.enabled = !track.enabled;
@@ -97,3 +100,46 @@ async function handleCameraChange() {
 muteBtn.addEventListener("click", handleMuteBtn);
 cameraBtn.addEventListener("click", handleCameraBtn);
 camerasSelect.addEventListener("input", handleCameraChange);
+
+// welcome form (join a room)
+
+const welcome = document.getElementById("welcome");
+const welcomeForm = welcome.querySelector("form");
+
+async function startMedia() {
+    welcome.hidden = true;
+    call.hidden = false;
+    await getMedia();
+    makeConnection();
+}
+
+function handleWelcomeSubmit(event) {
+    event.preventDefault();
+    const input = welcomeForm.querySelector("input");
+    socket.emit("enter_room", input.value, startMedia);
+    roomName = input.value;
+    input.value = "";
+}
+
+welcomeForm.addEventListener("submit", handleWelcomeSubmit);
+
+// socket code
+
+socket.on("welcome", async(msg) => {
+    // peer A는 offer를 생성한다.
+    const offer = await myPeerConnection.createOffer();
+    myPeerConnection.setLocalDescription(offer);
+
+    // peer B로 offer를 보낸다.
+    socket.emit("offer", offer, roomName);
+})
+
+socket.on("offer", async(offer) => {
+})
+
+// RTC code
+
+function makeConnection() {
+    myPeerConnection = new RTCPeerConnection();
+    myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream))
+}

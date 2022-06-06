@@ -99,6 +99,11 @@ wsServer.on("connection", (socket) => {
     socket.on("nickname", (nick) => {
         socket["nickname"] = nick;
     });
+
+    socket.on("offer", (offer, roomName) => {
+        socket.to(roomName).emit("offer", offer);
+    });
+
 });
 
 // Websocket 구현
