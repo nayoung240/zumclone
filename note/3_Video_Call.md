@@ -102,3 +102,32 @@ myPeerConnection.setRemoteDescription(answer);
 <br>
 
 > 각 브라우저는 localDescription과 remoteDescription을 갖게된다.
+
+<br><br>
+
+# 3.7 IceCandidate
+
+### Internet Connectivity Establishment: 브라우저가 서로 소통할 수 있게 해주는 방법
+
+5. peer A에서 icecandidate 이벤트 실행 -> candidate 전달
+6. peer B에서 candidate 추가 -> icecandidate 이벤트 실행 -> candidate 전달
+    - addIceCandidate()
+7. peer A에서 candidate 추가
+    - addIceCandidate()
+```
+myPeerConnection.addEventListener("icecandidate", handleIce);
+
+// 상대 peer로 candidate를 보낸다.
+socket.emit("ice", data.candidate, roomName);
+
+myPeerConnection.addIceCandidate(ice);
+```
+
+8. addstream 이벤트 등록
+myPeerConnection.addEventListener("addstream", handleAddStream);
+```
+myPeerConnection.addEventListener("addstream", handleAddStream);
+
+// 상대 peer의 stream: data.stream, 내 peer의 stream: myStream
+peerFace.srcObject = data.stream;
+```

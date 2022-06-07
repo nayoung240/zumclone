@@ -150,13 +150,32 @@ socket.on("offer", async(offer) => {
     socket.emit("answer", answer, roomName);
 })
 
+// peer A에서 실행되는 코드
 socket.on("answer", async(answer) => {
     myPeerConnection.setRemoteDescription(answer);
+})
+
+socket.on("ice", async(ice) => {
+    myPeerConnection.addIceCandidate(ice);
 })
 
 // RTC code
 
 function makeConnection() {
     myPeerConnection = new RTCPeerConnection();
+    myPeerConnection.addEventListener("icecandidate", handleIce);
+    myPeerConnection.addEventListener("addstream", handleAddStream);
+
     myStream.getTracks().forEach(track => myPeerConnection.addTrack(track, myStream))
+}
+
+function handleIce(data) {
+    // 상대 peer로 candidate를 보낸다.
+    socket.emit("ice", data.candidate, roomName);
+}
+
+function handleAddStream(data) {
+    const peerFace = document.getElementById("peerFace");
+    // 상대 peer의 stream: data.stream, 내 peer의 stream: myStream
+    peerFace.srcObject = data.stream;
 }
