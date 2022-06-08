@@ -131,3 +131,22 @@ myPeerConnection.addEventListener("addstream", handleAddStream);
 // 상대 peer의 stream: data.stream, 내 peer의 stream: myStream
 peerFace.srcObject = data.stream;
 ```
+
+<br><br>
+
+# 3.8 Senders
+
+## 카메라 변경 시 peer한테 줄 stream 업데이트하기
+
+### sender
+: 다른 브라우저로 보내진 비디오와 오디오 데이터를 컨트롤하는 방법
+- getSenders()
+
+<br>
+
+## 모바일 테스트 하기
+- 일시적인 무료
+- 서버의 URL 생성
+```
+npm i -g localtunnel
+```
