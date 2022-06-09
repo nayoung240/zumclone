@@ -145,8 +145,47 @@ peerFace.srcObject = data.stream;
 <br>
 
 ## 모바일 테스트 하기
-- 일시적인 무료
 - 서버의 URL 생성
+- 일시적인 무료
+- 같은 네트워크를 사용해야하므로 컴퓨터와 모바일이 같은 wifi여야 한다
 ```
 npm i -g localtunnel
 ```
+
+<br><br>
+
+# 3.9 STUN
+
+## STUN (Session Traversal Utilities for NAT)
+### 제대로 운영하기 위해서는 STUN 서버가 필요하다.
+- 같은 wifi를 사용하지 않아도 peer-to-peer가 가능하다.
+- 공용주소를 알아낼 수 있다.
+- ex) 구글 무료 제공 (테스트용)
+
+<br><br>
+
+# Conclusions
+
+## RTC - DataChannel
+: 이미지, 파일, 텍스트, 게임 등 주고받을 수 있다.
+- 채팅을 할 때 Socketio가 필요 없다.
+- 파일을 주고받을 때 업로드 서버가 필요 없다.
+
+![message](./img/3_10webrtc.png)
+### signaling 서버 (Mesh)
+: peer간의 offer, answer라는 session 정보 signal만 중계
+- 1:1 연결에 적합
+- WebRTC 사용하면 안되는 환경
+    - 너무 많은 peer를 가질 경우 클라이언트가 느려진다. (최대 3명까지..)
+    - 텍스트만 주고받을 경우는 괜찮다. (비디오, 오디오 X)
+
+### SFU (Selective Forwrding Unit)
+: 서버와 클라이언트간의 peer 연결
+- 1:N 또는 소규모 N:M 실시간 스트리밍에 적합
+- 서버에 의존한다. (서버비용 ↑)
+
+<br>
+
+> webSocket, socket.IO, webRTC, Data Channel 사용해보기!
+>> 서버를 가진경우 socket.IO 적합
+>> peer-to-peer를 하고싶고 서버는 필요 없다면 Data Channel 적합
